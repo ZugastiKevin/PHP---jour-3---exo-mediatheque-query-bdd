@@ -8,7 +8,7 @@
         $requestPrepareUser = $bdd->prepare(
             "SELECT id, nom, prenom, pass
             FROM user
-            WHERE (nom = '$lastName') AND prenom = ('$firstName')
+            WHERE nom = ('$lastName') AND prenom = ('$firstName')
         ");
         $requestPrepareUser->execute(array());
         $data = $requestPrepareUser->fetch();

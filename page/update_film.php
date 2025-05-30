@@ -3,56 +3,63 @@
 
     $bdd = new PDO('mysql:host=mysql;dbname=mediatheque;charset=utf8','root','root');
 
-    if (isset($_POST['title']) && isset($_POST['realisator']) && isset($_POST['gender']) && isset($_POST['time']) && isset($_POST['synopsis']) && isset($_FILES["filmFile"])) {
-        $title = htmlspecialchars($_POST['title']);
-        $realisator = htmlspecialchars($_POST['realisator']);
-        $gender = htmlspecialchars($_POST['gender']);
-        $time = htmlspecialchars($_POST['time']);
-        $synopsis = htmlspecialchars($_POST['synopsis']);
-        $img = $_FILES['filmFile'];
-        $getExtension = strtolower(pathinfo($img["name"], PATHINFO_EXTENSION));
-        $extensionType = ['png','jpeg','jpg','webp','bmp','svg'];
-        var_dump($_SESSION["currentUser"][0]);
+    if (isset($_GET['id'])) {
+        $id = htmlspecialchars($_GET["id"]);
+        $request = $bdd->prepare(
+            "SELECT user_id,titre,realisateur,genre,duree,synopsis,img
+            FROM film 
+            WHERE id = ?
+        ");
+        $request->execute([$id]);
+        $data = $request->fetch();
+        if ($_SESSION['currentUser'][0] == $data['user_id']) {
+            if (isset($_POST['title']) && isset($_POST['realisator']) && isset($_POST['gender']) && isset($_POST['time']) && isset($_POST['synopsis']) && isset($_FILES["filmFile"])) {
+                $title = htmlspecialchars($_POST['title']);
+                $realisator = htmlspecialchars($_POST['realisator']);
+                $gender = htmlspecialchars($_POST['gender']);
+                $time = htmlspecialchars($_POST['time']);
+                $synopsis = htmlspecialchars($_POST['synopsis']);
+                $img = $_FILES['filmFile'];
+                $getExtension = strtolower(pathinfo($img["name"], PATHINFO_EXTENSION));
+                $extensionType = ['png','jpeg','jpg','webp','bmp','svg'];
 
-        switch ($_FILES["filmFile"]['error']) {
-            case 4:
-                $requestCreate = $bdd->prepare(
-                    'INSERT INTO film(titre,realisateur,genre,duree,synopsis,img,user_id) 
-                    VALUES (:titre,:realisateur,:genre,:duree,:synopsis,:img,:user_id)
-                ');
-                $requestCreate->execute([
-                    'titre'=>$title,
-                    'realisateur'=>$realisator,
-                    'genre'=>$gender,
-                    'duree'=>$time,
-                    'synopsis'=>$synopsis,
-                    'img'=>0,
-                    'user_id'=>$_SESSION["currentUser"][0]
-                ]);
-                header('location:http://localhost:8080/mediatheque/index.php');
-                break;
-            case  0:
-                if(!in_array($getExtension, $extensionType)){
-                    echo "Extension non autorisée : ".$getExtension." format valide: png, jpeg, jpg, webp, bmp, svg</p>";
-                } else {
-                    $uniqueName = uniqid().'.'.$getExtension;
-                    move_uploaded_file($_FILES['filmFile']['tmp_name'],"./../assets/img/upload/".$uniqueName);
-                    $requestCreate = $bdd->prepare(
-                        'INSERT INTO film(titre,realisateur,genre,duree,synopsis,img,user_id) 
-                        VALUES (:titre,:realisateur,:genre,:duree,:synopsis,:img,:user_id)
-                    ');
-                    $requestCreate->execute([
-                        'titre'=>$title,
-                        'realisateur'=>$realisator,
-                        'genre'=>$gender,
-                        'duree'=>$time,
-                        'synopsis'=>$synopsis,
-                        'img'=>$uniqueName,
-                        'user_id'=>$_SESSION["currentUser"]['0']
-                    ]);
-                    header('location:http://localhost:8080/mediatheque/index.php');
+                $finalTitle = $title ? $title : $data['titre'];
+                $finalRealisator = $realisator ? $realisator : $data['realisateur'];
+                $finalGender = $gender ? $gender : $data['genre'];
+                $finalTime = $time ? $time : $data['duree'];
+                $finalSynopsis = $synopsis ? $synopsis : $data['synopsis'];
+
+                switch ($_FILES["filmFile"]['error']) {
+                    case 4:
+                        $requestCreate = $bdd->prepare(
+                            "UPDATE film 
+                            SET titre = ?, realisateur = ?, genre = ?, duree = ?, synopsis = ?
+                            WHERE id = ('$id')
+                        ");
+                        $requestCreate->execute([$finalTitle, $finalRealisator,  $finalGender, $finalTime, $finalSynopsis]);
+                        header('location:http://localhost:8080/mediatheque/page/read.php?id='.$id);
+                        break;
+                    case  0:
+                        if(!in_array($getExtension, $extensionType)){
+                            echo "Extension non autorisée : ".$getExtension." format valide: png, jpeg, jpg, webp, bmp, svg</p>";
+                        } else {
+                            $uniqueName = uniqid().'.'.$getExtension;
+                            move_uploaded_file($_FILES['filmFile']['tmp_name'],"./../assets/img/upload/".$uniqueName);
+                            var_dump($data['img']);
+                            if ($data['img'] != '0.jpg') {
+                                unlink('./../assets/img/upload/'.$data['img']);
+                            }
+                            $requestCreate = $bdd->prepare(
+                                "UPDATE film 
+                                SET titre = ?, realisateur = ?, genre = ?, duree = ?, synopsis = ?, img = ?
+                                WHERE id = ('$id')
+                            ");
+                            $requestCreate->execute([$finalTitle, $finalRealisator,  $finalGender, $finalTime, $finalSynopsis, $uniqueName]);
+                            header('location:http://localhost:8080/mediatheque/page/read.php?id='.$id);
+                        }
+                        break;
                 }
-                break;
+            }
         }
     }
 ?>
@@ -68,11 +75,12 @@
 <body>
     <main>
         <h2>Formulaire</h2>
-        <form action="create_film.php" method="post" enctype="multipart/form-data">
-            <input type="text" name="title" placeholder="titre du film" required>
-            <input type="text" name="realisator" placeholder="nom du realisateur" required>
-            <input type="text" name="gender" placeholder="genre du film" required>
-            <input type="number" name="time" placeholder="duree du film" required>
+        <!--<form action="update_film.php" method="post" enctype="multipart/form-data">-->
+        <?php echo '<form action="update_film.php?id='.$id.'" method="post" enctype="multipart/form-data">'; ?>
+            <input type="text" name="title" placeholder="titre du film">
+            <input type="text" name="realisator" placeholder="nom du realisateur">
+            <input type="text" name="gender" placeholder="genre du film">
+            <input type="number" name="time" placeholder="duree du film">
             <input type="text" name="synopsis" placeholder="le synopsis">
             <label for="filmFile">Upload l'image du film</label>
             <input type="file" name="filmFile">

@@ -12,7 +12,6 @@
         $img = $_FILES['filmFile'];
         $getExtension = strtolower(pathinfo($img["name"], PATHINFO_EXTENSION));
         $extensionType = ['png','jpeg','jpg','webp','bmp','svg'];
-        var_dump($_SESSION["currentUser"][0]);
 
         switch ($_FILES["filmFile"]['error']) {
             case 4:
@@ -26,7 +25,7 @@
                     'genre'=>$gender,
                     'duree'=>$time,
                     'synopsis'=>$synopsis,
-                    'img'=>0,
+                    'img'=>'0.jpg',
                     'user_id'=>$_SESSION["currentUser"][0]
                 ]);
                 header('location:http://localhost:8080/mediatheque/index.php');

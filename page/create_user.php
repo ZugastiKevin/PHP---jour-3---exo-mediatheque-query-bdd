@@ -1,5 +1,5 @@
 <?php
-    include('./layout/header.php');
+    include('../layout/header.php');
 
     $bdd = new PDO('mysql:host=mysql;dbname=mediatheque;charset=utf8','root','root');
 
@@ -17,9 +17,10 @@
         $requestPrepareUser = $bdd->prepare(
             "SELECT id, nom, prenom
             FROM user
-            WHERE (nom = '$lastName') AND prenom = ('$firstName')
+            WHERE nom = ('$lastName') AND prenom = ('$firstName')
         ");
-        $data = $requestPrepareUser->execute(array());
+        $requestPrepareUser->execute(array());
+        $data = $requestPrepareUser->fetch();
         $_SESSION["currentUser"] = [$data['id'], $data['nom'], $data['prenom']];
         header('location:http://localhost:8080/mediatheque/index.php');
     }

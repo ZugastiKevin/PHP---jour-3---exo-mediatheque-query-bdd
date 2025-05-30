@@ -44,7 +44,7 @@
                             echo '<p>' . $data['synopsis'] . '</p>';
                         echo '</div>';
                         echo '<div class="container-option">';
-                            echo '<a href="http://localhost:8080/mediatheque/page/updateFilm.php?id=' . $data['id'] . '">Modifier</a>';
+                            echo '<a href="http://localhost:8080/mediatheque/page/update_film.php?id=' . $data['id'] . '">Modifier</a>';
                             echo '<a href="http://localhost:8080/mediatheque/component/delete.php?id=' . $data['id'] . '">Suprimer</a>';
                         echo '</div>';
                     }
