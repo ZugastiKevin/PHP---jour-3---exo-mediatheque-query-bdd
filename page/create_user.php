@@ -17,11 +17,11 @@
         $requestPrepareUser = $bdd->prepare(
             "SELECT id, nom, prenom
             FROM user
-            WHERE nom = ('$lastName') AND prenom = ('$firstName')
+            WHERE nom = :nom AND prenom = :prenom
         ");
-        $requestPrepareUser->execute(array());
+        $requestPrepareUser->execute(['nom'=>$lastName, 'prenom'=>$firstName]);
         $data = $requestPrepareUser->fetch();
-        $_SESSION["currentUser"] = [$data['id'], $data['nom'], $data['prenom']];
+        createSessionUser($data['id'], $data['nom'], $data['prenom']);
         header('location:http://localhost:8080/mediatheque/index.php');
     }
 ?>

@@ -8,9 +8,9 @@
         $request = $bdd->prepare(
             "SELECT user_id,titre,realisateur,genre,duree,synopsis,img
             FROM film 
-            WHERE id = ?
+            WHERE id = :id
         ");
-        $request->execute([$id]);
+        $request->execute(['id'=>$id]);
         $data = $request->fetch();
         if ($_SESSION['currentUser'][0] == $data['user_id']) {
             if (isset($_POST['title']) && isset($_POST['realisator']) && isset($_POST['gender']) && isset($_POST['time']) && isset($_POST['synopsis']) && isset($_FILES["filmFile"])) {
@@ -31,12 +31,12 @@
 
                 switch ($_FILES["filmFile"]['error']) {
                     case 4:
-                        $requestCreate = $bdd->prepare(
+                        $requestUpdate = $bdd->prepare(
                             "UPDATE film 
-                            SET titre = ?, realisateur = ?, genre = ?, duree = ?, synopsis = ?
-                            WHERE id = ('$id')
+                            SET titre = :titre, realisateur = :realisateur, genre = :genre, duree = :duree, synopsis = :synopsis
+                            WHERE id = :id
                         ");
-                        $requestCreate->execute([$finalTitle, $finalRealisator,  $finalGender, $finalTime, $finalSynopsis]);
+                        $requestUpdate->execute(['id'=>$id, 'titre'=>$finalTitle, 'realisateur'=>$finalRealisator,  'genre'=>$finalGender, 'duree'=>$finalTime, 'synopsis'=>$finalSynopsis]);
                         header('location:http://localhost:8080/mediatheque/page/read.php?id='.$id);
                         break;
                     case  0:
@@ -49,17 +49,19 @@
                             if ($data['img'] != '0.jpg') {
                                 unlink('./../assets/img/upload/'.$data['img']);
                             }
-                            $requestCreate = $bdd->prepare(
+                            $requestUpdate = $bdd->prepare(
                                 "UPDATE film 
                                 SET titre = ?, realisateur = ?, genre = ?, duree = ?, synopsis = ?, img = ?
                                 WHERE id = ('$id')
                             ");
-                            $requestCreate->execute([$finalTitle, $finalRealisator,  $finalGender, $finalTime, $finalSynopsis, $uniqueName]);
+                            $requestUpdate->execute([$finalTitle, $finalRealisator,  $finalGender, $finalTime, $finalSynopsis, $uniqueName]);
                             header('location:http://localhost:8080/mediatheque/page/read.php?id='.$id);
                         }
                         break;
                 }
             }
+        } else {
+            header('location:http://localhost:8080/mediatheque/page/read.php?id='.$id);
         }
     }
 ?>

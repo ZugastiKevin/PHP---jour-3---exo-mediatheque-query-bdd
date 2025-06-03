@@ -8,14 +8,19 @@
         $requestPrepareUser = $bdd->prepare(
             "SELECT id, nom, prenom, pass
             FROM user
-            WHERE nom = ('$lastName') AND prenom = ('$firstName')
+            WHERE nom = :lastName AND prenom = :firstName
         ");
-        $requestPrepareUser->execute(array());
+        $requestPrepareUser->execute(['lastName'=>$lastName, 'firstName'=>$firstName]);
         $data = $requestPrepareUser->fetch();
         $encryption = trim(htmlspecialchars($_POST["password"]));
         if (password_verify($encryption, $data['pass'])) {
-                $_SESSION["currentUser"] = [$data['id'], $data['nom'], $data['prenom']];
+            if (isset($_POST['remember-me']) == true) {
+                createSessionUserWithRemember($data['id'], $data['nom'], $data['prenom']);
                 header("location:http://localhost:8080/mediatheque/index.php");
+            } else {
+                createSessionUser($data['id'], $data['nom'], $data['prenom']);
+                header("location:http://localhost:8080/mediatheque/index.php");
+            }
         } else {
             header("location:http://localhost:8080/mediatheque/component/login.php?error=3");
         }
@@ -44,6 +49,8 @@
             <input type="text" name="lastname" required>
             <label for="password">Mots de passe:</label>
             <input type="password" name="password" required>
+            <label for="remember-me">Se souvenir de moi:</label>
+            <input type="checkbox" name="remember-me" value="true">
             <input type="submit" value="Connection">
         </form>
     </main>

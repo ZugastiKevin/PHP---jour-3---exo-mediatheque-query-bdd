@@ -1,3 +1,15 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0 auto;
+}
+
+header {
+    display: flex;
+    justify-content: center;
+}
 img {
     width: 100%;
     height: 100%;
@@ -5,7 +17,10 @@ img {
     border-radius: 1rem;
 }
 section {
-    margin-top: 3rem;
+    margin-top: 4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 ul {
     list-style: none;
@@ -21,6 +36,7 @@ a {
 }
 
 #container {
+    width: 90%;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -32,15 +48,53 @@ a {
     gap: 1rem;
 }
 .container {
-    text-align: center;
+    width: 90%;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
+}
+.cards-container {
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
 }
 .container-option {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     gap: 1rem;
+    padding-left: 5rem;
+}
+
+.card-content {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    padding-left: 5rem;
+}
+
+.container-img {
+    padding-left: 5rem;
+}
+
+.card-content-film {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
+    padding-left: 5rem;
+}
+
+.form-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2rem;
 }

@@ -66,17 +66,23 @@
 </head>
 <body>
     <main>
-        <h2>Formulaire</h2>
-        <form action="create_film.php" method="post" enctype="multipart/form-data">
-            <input type="text" name="title" placeholder="titre du film" required>
-            <input type="text" name="realisator" placeholder="nom du realisateur" required>
-            <input type="text" name="gender" placeholder="genre du film" required>
-            <input type="number" name="time" placeholder="duree du film" required>
-            <input type="text" name="synopsis" placeholder="le synopsis">
-            <label for="filmFile">Upload l'image du film</label>
-            <input type="file" name="filmFile">
-            <input type="submit" value="Envoyer">
-        </form>
+        <section>
+            <div class="container">
+                <div class="cards-container">
+                    <h2>Cree la fiche de votre film:</h2>
+                    <form class="form-content" action="create_film.php" method="post" enctype="multipart/form-data">
+                        <input type="text" name="title" placeholder="titre du film" required>
+                        <input type="text" name="realisator" placeholder="nom du realisateur" required>
+                        <input type="text" name="gender" placeholder="genre du film" required>
+                        <input type="number" name="time" placeholder="duree du film" required>
+                        <input type="text" name="synopsis" placeholder="le synopsis">
+                        <label for="filmFile">Upload l'image du film</label>
+                        <input type="file" name="filmFile">
+                        <input type="submit" value="Envoyer">
+                    </form>
+                </div>
+            </div>
+        </section>
     </main>
 </body>
 </html>

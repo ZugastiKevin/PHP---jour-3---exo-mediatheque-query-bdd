@@ -2,12 +2,6 @@
     include('./layout/header.php');
 
     $bdd = new PDO('mysql:host=mysql;dbname=mediatheque;charset=utf8','root','root');
-    $requestQueryFilm = $bdd->query(
-        'SELECT id, titre, realisateur, genre, duree 
-        FROM film 
-        ORDER BY id DESC
-        LIMIT 3
-    ');
     $requestPrepareFilm = $bdd->prepare(
         'SELECT id, titre, realisateur, genre, duree 
         FROM film
@@ -27,20 +21,28 @@
 </head>
 <body>
     <main>
-        <h2>Les 3 dernier film, query</h2>
-        <?php
-            while($data = $requestQueryFilm->fetch()){
-                echo '<p>le titre du film est: ' . $data['titre'] . ' et le realisteur est: ' . $data['realisateur'] . ' et le genre est: ' . $data['genre'] . ' et la duree est de: ' . $data['duree'] . ' minutes</p><a href="./page/read.php?id=' . $data['id'] . '">voir plus</a>';
-            }
-        ?>
-        <h2>Les 3 dernier film, prepare</h2>
-        <?php
-            while($data = $requestPrepareFilm->fetch()){
-                echo '<p>le titre du film est: ' . $data['titre'] . ' et le realisteur est: ' . $data['realisateur'] . ' et le genre est: ' . $data['genre'] . ' et la duree est de: ' . $data['duree'] . ' minutes</p><a href="./page/read.php?id=' . $data['id'] . '">voir plus</a>';
-            }
-        ?>
-        <h2>Film</h2>
-        <a href="./page/readAll.php">Voir tous les film</a>
+        <section id="last-3-movies">
+            <div class="container last-3-movies">
+                <div class="cards-container">
+                    <h2>Les 3 dernier film:</h2>
+                    <?php
+                        while($data = $requestPrepareFilm->fetch()){
+                            echo '<div class="card-content"><p>le titre du film est: ' . $data['titre'] . ' et le realisteur est: ' . $data['realisateur'] . ' et le genre est: ' . $data['genre'] . ' et la duree est de: ' . $data['duree'] . ' minutes</p><a href="./page/read.php?id=' . $data['id'] . '">voir plus</a></div>';
+                        }
+                    ?>
+                </div>
+            </div>
+        </section>
+        <section id="all-movies">
+            <div class="container all-movies">
+                <div class="cards-container">
+                    <h2>Film:</h2>
+                    <div class="card-content">
+                        <a href="./page/readAll.php">Voir tous les film</a>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 </body>
 </html>

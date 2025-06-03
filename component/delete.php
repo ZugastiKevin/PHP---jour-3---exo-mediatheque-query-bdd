@@ -13,9 +13,9 @@
         if ($_SESSION['currentUser'][0] == $data['user_id']) {
             $requestDelete = $bdd->prepare(
                 'DELETE FROM film 
-                WHERE id = '. $id . '
+                WHERE id = :id
             ');
-            $requestDelete->execute();
+            $requestDelete->execute(['id'=>$id]);
             unlink('./../assets/img/upload/'.$data['img']);
             header('location:http://localhost:8080/mediatheque/index.php');
         } else {
